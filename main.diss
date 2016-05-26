@@ -1,0 +1,1027 @@
+
+main.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00008000 <_start>:
+.section ".text"
+_start:
+    /*
+     * Interrupt Vector
+     */
+    ldr pc, _reset_h
+    8000:	e59ff018 	ldr	pc, [pc, #24]	; 8020 <_reset_h>
+    ldr pc, =undefined_h
+    8004:	e59ff078 	ldr	pc, [pc, #120]	; 8084 <loop+0x4>
+    ldr pc, =sw_interrupt_h
+    8008:	e59ff078 	ldr	pc, [pc, #120]	; 8088 <loop+0x8>
+    ldr pc, =prefetch_abort_h
+    800c:	e59ff078 	ldr	pc, [pc, #120]	; 808c <loop+0xc>
+    ldr pc, =data_abort_h
+    8010:	e59ff078 	ldr	pc, [pc, #120]	; 8090 <loop+0x10>
+    ldr pc, =_reset_h
+    8014:	e59ff078 	ldr	pc, [pc, #120]	; 8094 <loop+0x14>
+    ldr pc, =irq_h
+    8018:	e59ff078 	ldr	pc, [pc, #120]	; 8098 <loop+0x18>
+    ldr pc, =fiq_h
+    801c:	e59ff078 	ldr	pc, [pc, #120]	; 809c <loop+0x1c>
+
+00008020 <_reset_h>:
+    8020:	0000803c 	.word	0x0000803c
+
+00008024 <undefined_h>:
+    8024:	000083f0 	.word	0x000083f0
+
+00008028 <sw_interrupt_h>:
+    8028:	000083f4 	.word	0x000083f4
+
+0000802c <prefetch_abort_h>:
+    802c:	000083fc 	.word	0x000083fc
+
+00008030 <data_abort_h>:
+    8030:	000083f8 	.word	0x000083f8
+
+00008034 <irq_h>:
+    8034:	00008404 	.word	0x00008404
+
+00008038 <fiq_h>:
+    8038:	00008454 	.word	0x00008454
+
+0000803c <_reset>:
+    irq_h:                .word   irq
+    fiq_h:                .word   fiq
+
+_reset:
+    // Load Inetrrupt Vector
+    mov     r0, #0x8000
+    803c:	e3a00902 	mov	r0, #32768	; 0x8000
+    mov     r1, #0x0000
+    8040:	e3a01000 	mov	r1, #0
+    ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
+    8044:	e8b003fc 	ldm	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
+    8048:	e8a103fc 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
+    804c:	e8b003fc 	ldm	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
+    stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
+    8050:	e8a103fc 	stmia	r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
+     *
+     * Stacks:
+     * 0x4000
+     */
+
+    mov r0, #0x0
+    8054:	e3a00000 	mov	r0, #0
+
+    // IRQ stack
+    cps #0x12
+    8058:	f1020012 	cps	#18
+    add sp, r0, #0x4000000
+    805c:	e280d301 	add	sp, r0, #67108864	; 0x4000000
+
+    // FIQ stack
+    cps #0x11
+    8060:	f1020011 	cps	#17
+    add sp, r0, #0x3F00000
+    8064:	e280d63f 	add	sp, r0, #66060288	; 0x3f00000
+
+    // ABORT stack
+    cps #0x17
+    8068:	f1020017 	cps	#23
+    add sp, r0, #0x3E00000
+    806c:	e280d63e 	add	sp, r0, #65011712	; 0x3e00000
+
+    // SVC stck
+    cps #0x13
+    8070:	f1020013 	cps	#19
+    add sp, r0, #0x3D00000
+    8074:	e280d63d 	add	sp, r0, #63963136	; 0x3d00000
+    /*
+     * Clean BSS
+     *
+     * If you want more information: https://en.wikipedia.org/wiki/.bss
+     */
+    bl bss
+    8078:	eb0000fa 	bl	8468 <bss>
+
+    /*
+     * Jump to main program
+     */
+    bl main
+    807c:	eb0000c5 	bl	8398 <main>
+
+00008080 <loop>:
+    // We never reach this part of code
+loop: b loop
+    8080:	eafffffe 	b	8080 <loop>
+_start:
+    /*
+     * Interrupt Vector
+     */
+    ldr pc, _reset_h
+    ldr pc, =undefined_h
+    8084:	00008024 	.word	0x00008024
+    ldr pc, =sw_interrupt_h
+    8088:	00008028 	.word	0x00008028
+    ldr pc, =prefetch_abort_h
+    808c:	0000802c 	.word	0x0000802c
+    ldr pc, =data_abort_h
+    8090:	00008030 	.word	0x00008030
+    ldr pc, =_reset_h
+    8094:	00008020 	.word	0x00008020
+    ldr pc, =irq_h
+    8098:	00008034 	.word	0x00008034
+    ldr pc, =fiq_h
+    809c:	00008038 	.word	0x00008038
+
+000080a0 <setPullUpDownGPIO>:
+
+
+void setPullUpDownGPIO(unsigned int n, unsigned int value){
+    int i;
+    //Set pullup
+    gpio->gppud = value;
+    80a0:	e3a03096 	mov	r3, #150	; 0x96
+    80a4:	e59f204c 	ldr	r2, [pc, #76]	; 80f8 <setPullUpDownGPIO+0x58>
+    80a8:	e5922000 	ldr	r2, [r2]
+    80ac:	e5821094 	str	r1, [r2, #148]	; 0x94
+    //System need 150 cycles of set-up control
+    for (i = 0;i < 150; ++i) asm(""); //Avoid compiler optimization
+    80b0:	e2533001 	subs	r3, r3, #1
+    80b4:	1afffffd 	bne	80b0 <setPullUpDownGPIO+0x10>
+    //Modify lines
+    if (n <= 32){ 
+        gpio->gppudclk0 = (0x01 << (n % 32));
+    80b8:	e3a01001 	mov	r1, #1
+    //Set pullup
+    gpio->gppud = value;
+    //System need 150 cycles of set-up control
+    for (i = 0;i < 150; ++i) asm(""); //Avoid compiler optimization
+    //Modify lines
+    if (n <= 32){ 
+    80bc:	e3500020 	cmp	r0, #32
+        gpio->gppudclk0 = (0x01 << (n % 32));
+    80c0:	e200001f 	and	r0, r0, #31
+    80c4:	e3a03096 	mov	r3, #150	; 0x96
+    80c8:	e1a00011 	lsl	r0, r1, r0
+    //Set pullup
+    gpio->gppud = value;
+    //System need 150 cycles of set-up control
+    for (i = 0;i < 150; ++i) asm(""); //Avoid compiler optimization
+    //Modify lines
+    if (n <= 32){ 
+    80cc:	8a000004 	bhi	80e4 <setPullUpDownGPIO+0x44>
+        gpio->gppudclk0 = (0x01 << (n % 32));
+    80d0:	e5820098 	str	r0, [r2, #152]	; 0x98
+        for (i = 0; i < 150; ++i) asm("");
+    80d4:	e2533001 	subs	r3, r3, #1
+    80d8:	1afffffd 	bne	80d4 <setPullUpDownGPIO+0x34>
+        gpio->gppudclk0 = 0x0;
+    80dc:	e5823098 	str	r3, [r2, #152]	; 0x98
+    80e0:	e12fff1e 	bx	lr
+    }
+    else{
+        gpio->gppudclk1 = (0x01 << (n % 32));
+    80e4:	e582009c 	str	r0, [r2, #156]	; 0x9c
+        for (i = 0; i < 150; ++i) asm("");
+    80e8:	e2533001 	subs	r3, r3, #1
+    80ec:	1afffffd 	bne	80e8 <setPullUpDownGPIO+0x48>
+        gpio->gppudclk1 = 0x0;
+    80f0:	e582309c 	str	r3, [r2, #156]	; 0x9c
+    80f4:	e12fff1e 	bx	lr
+    80f8:	000084ac 	.word	0x000084ac
+
+000080fc <setPullUpGPIO>:
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    80fc:	e3a01002 	mov	r1, #2
+    8100:	eaffffe6 	b	80a0 <setPullUpDownGPIO>
+
+00008104 <setPullDownGPIO>:
+
+/**
+ * Set GPIO n as pull-down
+ */
+void setPullDownGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x01);
+    8104:	e3a01001 	mov	r1, #1
+    8108:	eaffffe4 	b	80a0 <setPullUpDownGPIO>
+
+0000810c <setModeGPIO>:
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+
+    if (pin > 53) return -1;
+    810c:	e3500035 	cmp	r0, #53	; 0x35
+    8110:	9a000001 	bls	811c <setModeGPIO+0x10>
+    8114:	e3a000ff 	mov	r0, #255	; 0xff
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+        default: return -1;
+    }
+    return 0;
+}
+    8118:	e12fff1e 	bx	lr
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    811c:	e59f30f8 	ldr	r3, [pc, #248]	; 821c <setModeGPIO+0x110>
+}
+
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    8120:	e92d4070 	push	{r4, r5, r6, lr}
+    8124:	e1a04000 	mov	r4, r0
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    8128:	e5935000 	ldr	r5, [r3]
+
+    if (pin > 53) return -1;
+
+    //Select Mode
+    switch (mode){
+    812c:	e3510009 	cmp	r1, #9
+    8130:	979ff101 	ldrls	pc, [pc, r1, lsl #2]
+    8134:	ea000036 	b	8214 <setModeGPIO+0x108>
+    8138:	0000816c 	.word	0x0000816c
+    813c:	0000819c 	.word	0x0000819c
+    8140:	000081cc 	.word	0x000081cc
+    8144:	000081d4 	.word	0x000081d4
+    8148:	000081ec 	.word	0x000081ec
+    814c:	000081f4 	.word	0x000081f4
+    8150:	000081fc 	.word	0x000081fc
+    8154:	00008204 	.word	0x00008204
+    8158:	0000820c 	.word	0x0000820c
+    815c:	00008160 	.word	0x00008160
+
+/**
+ * Set GPIO n as pull-down
+ */
+void setPullDownGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x01);
+    8160:	e3a01001 	mov	r1, #1
+    8164:	e1a00004 	mov	r0, r4
+    8168:	ebffffcc 	bl	80a0 <setPullUpDownGPIO>
+            setPullUpGPIO(pin);
+            line[pin / 10] &= GPFSEL_IN(pin);
+            break;
+        case INPUT_PULLDOWN:
+            setPullDownGPIO(pin);
+            line[pin / 10] &= GPFSEL_IN(pin);
+    816c:	e3a01007 	mov	r1, #7
+    8170:	e59f30a8 	ldr	r3, [pc, #168]	; 8220 <setModeGPIO+0x114>
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+        default: return -1;
+    }
+    return 0;
+    8174:	e3a00000 	mov	r0, #0
+            setPullUpGPIO(pin);
+            line[pin / 10] &= GPFSEL_IN(pin);
+            break;
+        case INPUT_PULLDOWN:
+            setPullDownGPIO(pin);
+            line[pin / 10] &= GPFSEL_IN(pin);
+    8178:	e0832493 	umull	r2, r3, r3, r4
+    817c:	e1a031a3 	lsr	r3, r3, #3
+    8180:	e0832103 	add	r2, r3, r3, lsl #2
+    8184:	e0444082 	sub	r4, r4, r2, lsl #1
+    8188:	e7952103 	ldr	r2, [r5, r3, lsl #2]
+    818c:	e0844084 	add	r4, r4, r4, lsl #1
+    8190:	e1c24411 	bic	r4, r2, r1, lsl r4
+    8194:	e7854103 	str	r4, [r5, r3, lsl #2]
+            break;
+    8198:	e8bd8070 	pop	{r4, r5, r6, pc}
+    if (pin > 53) return -1;
+
+    //Select Mode
+    switch (mode){
+        case INPUT: line[pin / 10] &= GPFSEL_IN(pin); break;
+        case OUTPUT: line[pin / 10] |= GPFSEL_OUT(pin); break;
+    819c:	e3a01001 	mov	r1, #1
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+        default: return -1;
+    }
+    return 0;
+    81a0:	e3a00000 	mov	r0, #0
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+    81a4:	e59f3074 	ldr	r3, [pc, #116]	; 8220 <setModeGPIO+0x114>
+    81a8:	e0832493 	umull	r2, r3, r3, r4
+    81ac:	e1a031a3 	lsr	r3, r3, #3
+    81b0:	e0832103 	add	r2, r3, r3, lsl #2
+    81b4:	e0444082 	sub	r4, r4, r2, lsl #1
+    81b8:	e7952103 	ldr	r2, [r5, r3, lsl #2]
+    81bc:	e0844084 	add	r4, r4, r4, lsl #1
+    81c0:	e1824411 	orr	r4, r2, r1, lsl r4
+    81c4:	e7854103 	str	r4, [r5, r3, lsl #2]
+    81c8:	e8bd8070 	pop	{r4, r5, r6, pc}
+    81cc:	e3a01002 	mov	r1, #2
+    81d0:	eafffff2 	b	81a0 <setModeGPIO+0x94>
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    81d4:	e3a01003 	mov	r1, #3
+    81d8:	e59f3040 	ldr	r3, [pc, #64]	; 8220 <setModeGPIO+0x114>
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+        default: return -1;
+    }
+    return 0;
+    81dc:	e3a00000 	mov	r0, #0
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    81e0:	e0832493 	umull	r2, r3, r3, r4
+    81e4:	e1a03133 	lsr	r3, r3, r1
+    81e8:	eafffff0 	b	81b0 <setModeGPIO+0xa4>
+            break;
+        case INPUT_PULLDOWN:
+            setPullDownGPIO(pin);
+            line[pin / 10] &= GPFSEL_IN(pin);
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+    81ec:	e3a01004 	mov	r1, #4
+    81f0:	eaffffea 	b	81a0 <setModeGPIO+0x94>
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+    81f4:	e3a01005 	mov	r1, #5
+    81f8:	eaffffe8 	b	81a0 <setModeGPIO+0x94>
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+    81fc:	e3a01006 	mov	r1, #6
+    8200:	eaffffe6 	b	81a0 <setModeGPIO+0x94>
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+    8204:	e3a01007 	mov	r1, #7
+    8208:	eaffffe4 	b	81a0 <setModeGPIO+0x94>
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    820c:	e3a01002 	mov	r1, #2
+    8210:	eaffffd3 	b	8164 <setModeGPIO+0x58>
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+        default: return -1;
+    8214:	e3a000ff 	mov	r0, #255	; 0xff
+    }
+    return 0;
+}
+    8218:	e8bd8070 	pop	{r4, r5, r6, pc}
+    821c:	000084ac 	.word	0x000084ac
+    8220:	cccccccd 	.word	0xcccccccd
+
+00008224 <writeGPIO>:
+ * Write value in GPIOpin
+ */
+
+char writeGPIO(unsigned int pin, unsigned int value){
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+    8224:	e3500035 	cmp	r0, #53	; 0x35
+    8228:	9a000001 	bls	8234 <writeGPIO+0x10>
+    822c:	e3a000ff 	mov	r0, #255	; 0xff
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else return -1;
+    * line |= (0x11 << (pin % 32));
+    return 0;
+}
+    8230:	e12fff1e 	bx	lr
+
+char writeGPIO(unsigned int pin, unsigned int value){
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+
+    if (value == HIGH){
+    8234:	e3510001 	cmp	r1, #1
+    8238:	0a00000e 	beq	8278 <writeGPIO+0x54>
+        line = &(gpio->gpset0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else if (value == LOW){
+    823c:	e3510000 	cmp	r1, #0
+    8240:	1afffff9 	bne	822c <writeGPIO+0x8>
+        line = &(gpio->gpclr0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    8244:	e3a03011 	mov	r3, #17
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else if (value == LOW){
+        line = &(gpio->gpclr0);
+    8248:	e59f204c 	ldr	r2, [pc, #76]	; 829c <writeGPIO+0x78>
+        line[pin / 32] = (0x11 << (pin % 32));
+    824c:	e200101f 	and	r1, r0, #31
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else if (value == LOW){
+        line = &(gpio->gpclr0);
+    8250:	e5922000 	ldr	r2, [r2]
+        line[pin / 32] = (0x11 << (pin % 32));
+    8254:	e1a03113 	lsl	r3, r3, r1
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else if (value == LOW){
+        line = &(gpio->gpclr0);
+    8258:	e2822028 	add	r2, r2, #40	; 0x28
+        line[pin / 32] = (0x11 << (pin % 32));
+    825c:	e1a002a0 	lsr	r0, r0, #5
+    8260:	e7823100 	str	r3, [r2, r0, lsl #2]
+    }
+    else return -1;
+    * line |= (0x11 << (pin % 32));
+    8264:	e5921000 	ldr	r1, [r2]
+    return 0;
+    8268:	e3a00000 	mov	r0, #0
+    else if (value == LOW){
+        line = &(gpio->gpclr0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    }
+    else return -1;
+    * line |= (0x11 << (pin % 32));
+    826c:	e1813003 	orr	r3, r1, r3
+    8270:	e5823000 	str	r3, [r2]
+    return 0;
+    8274:	e12fff1e 	bx	lr
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+        line[pin / 32] = (0x11 << (pin % 32));
+    8278:	e3a03011 	mov	r3, #17
+char writeGPIO(unsigned int pin, unsigned int value){
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+    827c:	e59f2018 	ldr	r2, [pc, #24]	; 829c <writeGPIO+0x78>
+        line[pin / 32] = (0x11 << (pin % 32));
+    8280:	e200101f 	and	r1, r0, #31
+char writeGPIO(unsigned int pin, unsigned int value){
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+    8284:	e5922000 	ldr	r2, [r2]
+        line[pin / 32] = (0x11 << (pin % 32));
+    8288:	e1a03113 	lsl	r3, r3, r1
+char writeGPIO(unsigned int pin, unsigned int value){
+    volatile unsigned int *line;
+    if (pin > 53) return -1;
+
+    if (value == HIGH){
+        line = &(gpio->gpset0);
+    828c:	e282201c 	add	r2, r2, #28
+        line[pin / 32] = (0x11 << (pin % 32));
+    8290:	e1a002a0 	lsr	r0, r0, #5
+    8294:	e7823100 	str	r3, [r2, r0, lsl #2]
+    8298:	eafffff1 	b	8264 <writeGPIO+0x40>
+    829c:	000084ac 	.word	0x000084ac
+
+000082a0 <readGPIO>:
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    if (n > 53) return -1;
+    82a0:	e3500035 	cmp	r0, #53	; 0x35
+    82a4:	9a000001 	bls	82b0 <readGPIO+0x10>
+    82a8:	e3e00000 	mvn	r0, #0
+    //Take value
+    if (line[n / 32] & (0x01 << (n % 32))) return HIGH;
+    else return LOW;
+}
+    82ac:	e12fff1e 	bx	lr
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    if (n > 53) return -1;
+    82b0:	e3a02001 	mov	r2, #1
+/**
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    82b4:	e59f3020 	ldr	r3, [pc, #32]	; 82dc <readGPIO+0x3c>
+    if (n > 53) return -1;
+    //Take value
+    if (line[n / 32] & (0x01 << (n % 32))) return HIGH;
+    82b8:	e1a012a0 	lsr	r1, r0, #5
+/**
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    82bc:	e5933000 	ldr	r3, [r3]
+    if (n > 53) return -1;
+    82c0:	e200001f 	and	r0, r0, #31
+/**
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    82c4:	e2833034 	add	r3, r3, #52	; 0x34
+    if (n > 53) return -1;
+    //Take value
+    if (line[n / 32] & (0x01 << (n % 32))) return HIGH;
+    82c8:	e7933101 	ldr	r3, [r3, r1, lsl #2]
+ * Read value from GPIOn
+ */
+unsigned int readGPIO(unsigned int n){
+    volatile unsigned int *line;
+    line = &(gpio->gplev0);
+    if (n > 53) return -1;
+    82cc:	e0133012 	ands	r3, r3, r2, lsl r0
+    82d0:	11a00002 	movne	r0, r2
+    82d4:	03a00000 	moveq	r0, #0
+    82d8:	e12fff1e 	bx	lr
+    82dc:	000084ac 	.word	0x000084ac
+
+000082e0 <jtag_enable>:
+}
+
+/**
+ * Change GPIO for using JTAG debugger
+ */
+void jtag_enable(void){
+    82e0:	e92d4010 	push	{r4, lr}
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    82e4:	e59f40a8 	ldr	r4, [pc, #168]	; 8394 <jtag_enable+0xb4>
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    82e8:	e3a01002 	mov	r1, #2
+    82ec:	e3a00016 	mov	r0, #22
+    82f0:	ebffff6a 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    82f4:	e5942000 	ldr	r2, [r4]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    82f8:	e3a01002 	mov	r1, #2
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    82fc:	e5923008 	ldr	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8300:	e3a00004 	mov	r0, #4
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8304:	e38330c0 	orr	r3, r3, #192	; 0xc0
+    8308:	e5823008 	str	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    830c:	ebffff63 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    8310:	e5942000 	ldr	r2, [r4]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8314:	e3a01002 	mov	r1, #2
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+    8318:	e5923000 	ldr	r3, [r2]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    831c:	e3a0001b 	mov	r0, #27
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+        case ALT5: line[pin / 10] |= GPFSEL_ALT5(pin); break;
+    8320:	e3833a02 	orr	r3, r3, #8192	; 0x2000
+    8324:	e5823000 	str	r3, [r2]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8328:	ebffff5c 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    832c:	e5942000 	ldr	r2, [r4]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8330:	e3a01002 	mov	r1, #2
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8334:	e5923008 	ldr	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8338:	e3a00019 	mov	r0, #25
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    833c:	e3833606 	orr	r3, r3, #6291456	; 0x600000
+    8340:	e5823008 	str	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8344:	ebffff55 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    8348:	e5942000 	ldr	r2, [r4]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    834c:	e3a01002 	mov	r1, #2
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8350:	e5923008 	ldr	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8354:	e3a00017 	mov	r0, #23
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8358:	e3833906 	orr	r3, r3, #98304	; 0x18000
+    835c:	e5823008 	str	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8360:	ebffff4e 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    8364:	e5942000 	ldr	r2, [r4]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8368:	e3a01002 	mov	r1, #2
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    836c:	e5923008 	ldr	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    8370:	e3a00018 	mov	r0, #24
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8374:	e3833c06 	orr	r3, r3, #1536	; 0x600
+    8378:	e5823008 	str	r3, [r2, #8]
+/**
+ *
+ * Set GPIO n as pull-up
+ */
+void setPullUpGPIO(unsigned int n){
+    setPullUpDownGPIO(n, 0x02);
+    837c:	ebffff47 	bl	80a0 <setPullUpDownGPIO>
+/**
+ * Select mode to GPIO n
+ */
+char setModeGPIO(unsigned int pin, unsigned int mode){
+    volatile uint32_t *line;
+    line = &(gpio->gpfsel0);
+    8380:	e5942000 	ldr	r2, [r4]
+            break;
+        case ALT0: line[pin / 10] |= GPFSEL_ALT0(pin); break;
+        case ALT1: line[pin / 10] |= GPFSEL_ALT1(pin); break;
+        case ALT2: line[pin / 10] |= GPFSEL_ALT2(pin); break;
+        case ALT3: line[pin / 10] |= GPFSEL_ALT3(pin); break;
+        case ALT4: line[pin / 10] |= GPFSEL_ALT4(pin); break;
+    8384:	e5923008 	ldr	r3, [r2, #8]
+    8388:	e3833a03 	orr	r3, r3, #12288	; 0x3000
+    838c:	e5823008 	str	r3, [r2, #8]
+    8390:	e8bd8010 	pop	{r4, pc}
+    8394:	000084ac 	.word	0x000084ac
+
+00008398 <main>:
+#include "lib/interrupt.h"
+#include "lib/timer.h"
+
+
+
+int main (void){
+    8398:	e92d4010 	push	{r4, lr}
+    unsigned int  wait;
+    // Config JTAG
+    jtag_enable();
+    839c:	ebffffcf 	bl	82e0 <jtag_enable>
+
+    setModeGPIO(ACT, OUTPUT);
+    83a0:	e3a01001 	mov	r1, #1
+    83a4:	e3a0002f 	mov	r0, #47	; 0x2f
+    83a8:	ebffff57 	bl	810c <setModeGPIO>
+    writeGPIO(ACT, LOW);
+    83ac:	e3a01000 	mov	r1, #0
+    83b0:	e3a0002f 	mov	r0, #47	; 0x2f
+    83b4:	ebffff9a 	bl	8224 <writeGPIO>
+#include "lib/interrupt.h"
+#include "lib/timer.h"
+
+
+
+int main (void){
+    83b8:	e3a03501 	mov	r3, #4194304	; 0x400000
+    setModeGPIO(ACT, OUTPUT);
+    writeGPIO(ACT, LOW);
+
+    // Blink ACT led
+    while(1){
+        for(wait = 0; wait < 0x400000; wait++) asm("");
+    83bc:	e2533001 	subs	r3, r3, #1
+    83c0:	1afffffd 	bne	83bc <main+0x24>
+        writeGPIO(ACT, HIGH);
+    83c4:	e3a01001 	mov	r1, #1
+    83c8:	e3a0002f 	mov	r0, #47	; 0x2f
+    83cc:	ebffff94 	bl	8224 <writeGPIO>
+    83d0:	e3a01501 	mov	r1, #4194304	; 0x400000
+        for(wait = 0; wait < 0x400000; wait++) asm("");
+    83d4:	e2511001 	subs	r1, r1, #1
+    83d8:	1afffffd 	bne	83d4 <main+0x3c>
+    83dc:	eafffff3 	b	83b0 <main+0x18>
+
+000083e0 <getInterrupt>:
+
+//Memory mapped interrupt register set
+interrupt_t* interrupt = (interrupt_t *) IRQ_BASIC_PENDING;
+
+interrupt_t* getInterrupt (void){
+    return interrupt;
+    83e0:	e59f3004 	ldr	r3, [pc, #4]	; 83ec <getInterrupt+0xc>
+}
+    83e4:	e5930000 	ldr	r0, [r3]
+    83e8:	e12fff1e 	bx	lr
+    83ec:	000084b0 	.word	0x000084b0
+
+000083f0 <undefined>:
+/**
+ * CPU jump here if an undefined instruccion is found.
+ *
+ * For debugging
+ */
+void __attribute__((interrupt("UNDEF"))) undefined(void){
+    83f0:	eafffffe 	b	83f0 <undefined>
+
+000083f4 <sw_interrupt>:
+}
+
+/**
+ * Interrupt handler
+ */
+void __attribute__((interrupt("SWI"))) sw_interrupt(void){
+    83f4:	eafffffe 	b	83f4 <sw_interrupt>
+
+000083f8 <data_abort>:
+void __attribute__((interrupt("ABORT"))) prefetch_abort(void){}
+
+/**
+ * Data abort
+ */
+void __attribute__((interrupt("ABORT"))) data_abort(void){}
+    83f8:	e25ef004 	subs	pc, lr, #4
+
+000083fc <prefetch_abort>:
+    83fc:	e25ef004 	subs	pc, lr, #4
+
+00008400 <reset_vector>:
+    8400:	e25ef004 	subs	pc, lr, #4
+
+00008404 <irq>:
+
+/**
+ * IRQ handler
+ */
+void __attribute__((interrupt("IRQ"))) irq(void){
+    8404:	e24ee004 	sub	lr, lr, #4
+    8408:	e92d503f 	push	{r0, r1, r2, r3, r4, r5, ip, lr}
+    static char on = 0;
+    getTimer()->irq_clear = 1;
+    840c:	eb000011 	bl	8458 <getTimer>
+    8410:	e3a05001 	mov	r5, #1
+    if (on){
+    8414:	e59f4034 	ldr	r4, [pc, #52]	; 8450 <irq+0x4c>
+/**
+ * IRQ handler
+ */
+void __attribute__((interrupt("IRQ"))) irq(void){
+    static char on = 0;
+    getTimer()->irq_clear = 1;
+    8418:	e580500c 	str	r5, [r0, #12]
+    if (on){
+    841c:	e5d41000 	ldrb	r1, [r4]
+    8420:	e3510000 	cmp	r1, #0
+    8424:	1a000003 	bne	8438 <irq+0x34>
+        writeGPIO(ACT, HIGH);
+        on = 0;
+    }
+    else{
+        writeGPIO(ACT, LOW);
+    8428:	e3a0002f 	mov	r0, #47	; 0x2f
+    842c:	ebffff7c 	bl	8224 <writeGPIO>
+        on = 1;
+    8430:	e5c45000 	strb	r5, [r4]
+    8434:	e8fd903f 	ldm	sp!, {r0, r1, r2, r3, r4, r5, ip, pc}^
+ */
+void __attribute__((interrupt("IRQ"))) irq(void){
+    static char on = 0;
+    getTimer()->irq_clear = 1;
+    if (on){
+        writeGPIO(ACT, HIGH);
+    8438:	e1a01005 	mov	r1, r5
+    843c:	e3a0002f 	mov	r0, #47	; 0x2f
+    8440:	ebffff77 	bl	8224 <writeGPIO>
+        on = 0;
+    8444:	e3a03000 	mov	r3, #0
+    8448:	e5c43000 	strb	r3, [r4]
+    844c:	e8fd903f 	ldm	sp!, {r0, r1, r2, r3, r4, r5, ip, pc}^
+    8450:	000084b8 	.word	0x000084b8
+
+00008454 <fiq>:
+}
+
+/*
+ * FIQ handler
+ */
+void __attribute__((interrupt("FIQ"))) fiq(void){}
+    8454:	e25ef004 	subs	pc, lr, #4
+
+00008458 <getTimer>:
+
+#include "timer.h"
+armTimer_t *timer = (armTimer_t *) ARM_TIMER_LOAD;
+
+armTimer_t* getTimer (void){
+    return timer;
+    8458:	e59f3004 	ldr	r3, [pc, #4]	; 8464 <getTimer+0xc>
+}
+    845c:	e5930000 	ldr	r0, [r3]
+    8460:	e12fff1e 	bx	lr
+    8464:	000084b4 	.word	0x000084b4
+
+00008468 <bss>:
+extern int __bss_s;
+extern int __bss_e;
+
+void bss(void){
+    int *start = &__bss_s, *end = &__bss_e;
+    while(start < end) *start++ = 0x0;
+    8468:	e59fc034 	ldr	ip, [pc, #52]	; 84a4 <bss+0x3c>
+    846c:	e59f2034 	ldr	r2, [pc, #52]	; 84a8 <bss+0x40>
+    8470:	e15c0002 	cmp	ip, r2
+    8474:	212fff1e 	bxcs	lr
+    8478:	e1e0100c 	mvn	r1, ip
+    847c:	e1a0300c 	mov	r3, ip
+    8480:	e3a00000 	mov	r0, #0
+    8484:	e0812002 	add	r2, r1, r2
+    8488:	e3c22003 	bic	r2, r2, #3
+    848c:	e2822004 	add	r2, r2, #4
+    8490:	e082200c 	add	r2, r2, ip
+    8494:	e4830004 	str	r0, [r3], #4
+    8498:	e1530002 	cmp	r3, r2
+    849c:	1afffffc 	bne	8494 <bss+0x2c>
+    84a0:	e12fff1e 	bx	lr
+    84a4:	000084b8 	.word	0x000084b8
+    84a8:	000084bc 	.word	0x000084bc
